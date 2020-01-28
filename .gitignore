@@ -1,0 +1,7 @@
+__pycache__
+.ipynb_checkpoints
+.pytest_cache
+Pipfile.lock
+nlp-dnn-baselines/preprocess/cache/*.data*
+nlp-dnn-baselines/preprocess/cache/*.index
+nlp-dnn-baselines/preprocess/vocab_set.pkl

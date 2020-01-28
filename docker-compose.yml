@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  tf:
+    build: ./nlp-dnn-baselines
+    container_name: tf
+    ports:
+      - 80:8888
+    volumes:
+      - ./nlp-dnn-baselines:/notebooks
+      - ./jupyter_notebook_config.json:/root/.jupyter/jupyter_notebook_config.json

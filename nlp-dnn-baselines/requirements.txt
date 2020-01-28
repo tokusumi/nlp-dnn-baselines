@@ -1,0 +1,6 @@
+janome
+mecab-python3
+tensorflow-datasets
+pylint
+mypy
+pytest

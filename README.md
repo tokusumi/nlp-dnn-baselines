@@ -11,7 +11,7 @@ DNN baselines, implemented by Tensorflow 2.0
 
 ## example usage
 ```
-$ pipenv install
-$ pipenv shell
-$ python nlp-dnn-baselines/lstm.py
+$ docker-compose build
+$ docker-compose up
+$ docker-compose run tf python nlp-dnn-baselines/lstm.py
 ```
