@@ -3,7 +3,7 @@ import tensorflow_datasets as tfds
 from typing import Set, List
 import os
 
-from .custom_tokenizer import janome_analyzer_tf as ja_tokenizer
+from .janome_tokenizer import janome_analyzer_tf as ja_tokenizer
 
 
 def get_test_dataset(epochs=1, vocab_set: Set[str] = {}, max_len=0, BATCH_SIZE=64, TEST_SIZE=5000, BUFFER_SIZE=50000, cache_dir='cache'):
