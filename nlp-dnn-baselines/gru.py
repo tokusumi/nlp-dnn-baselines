@@ -43,9 +43,10 @@ if __name__ == "__main__":
     num_classes = 3
     epochs = 3
 
-    # vocab_set = load_pickle('nlp-dnn-baselines/preprocess/vocab_set.pkl')
-    vocab_set = {}
-    train_data, test_data, params, vocab_set = get_test_dataset(epochs=epochs, vocab_set=vocab_set, max_len=30)
+    vocab_set = load_pickle('./preprocess/vocab_set.pkl')
+    # vocab_set = {}
+    train_data, test_data, params, vocab_set = get_test_dataset(
+        epochs=epochs, vocab_set=vocab_set, max_len=30, cache_dir='cache/base')
     max_len = params.get('max_len')
     num_words = params.get('vocab_size')
     batch_size = params.get('batch_size')

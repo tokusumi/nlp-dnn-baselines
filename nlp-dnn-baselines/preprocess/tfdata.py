@@ -4,9 +4,15 @@ from typing import Set, List
 import os
 
 from .janome_tokenizer import janome_analyzer_tf as ja_tokenizer
+from .char_tokenizer import char_tokenizer
 
 
-def get_test_dataset(epochs=1, vocab_set: Set[str] = {}, max_len=0, BATCH_SIZE=64, TEST_SIZE=5000, BUFFER_SIZE=50000, cache_dir='cache'):
+def get_test_dataset(epochs=1,
+                     vocab_set: Set[str] = {},
+                     max_len=0, char=False,
+                     BATCH_SIZE=64,
+                     TEST_SIZE=5000, BUFFER_SIZE=50000,
+                     cache_dir='cache'):
     """
     main function. implement the followings,
     - download dataset in local disk (please replace them if you want to use different dataset)
@@ -31,8 +37,9 @@ def get_test_dataset(epochs=1, vocab_set: Set[str] = {}, max_len=0, BATCH_SIZE=6
     # pipeline
     train_data, test_data, params, vocab_set = pipeline(
         file_names=file_names, file_paths=file_paths,
-        vocab_set=vocab_set, max_len=max_len,
-        BATCH_SIZE=BATCH_SIZE, TEST_SIZE=TEST_SIZE, BUFFER_SIZE=BUFFER_SIZE
+        vocab_set=vocab_set, max_len=max_len, char=char,
+        BATCH_SIZE=BATCH_SIZE, TEST_SIZE=TEST_SIZE, BUFFER_SIZE=BUFFER_SIZE,
+        cache_dir=cache_dir
     )
 
     return train_data, test_data, params, vocab_set
@@ -169,7 +176,7 @@ def get_max_len(datasets) -> int:
     return max_len
 
 
-def pipeline(file_names: List[str], file_paths: Set[str], vocab_set: Set[str] = {}, max_len=0, BATCH_SIZE=64, TEST_SIZE=5000, BUFFER_SIZE=50000, cache_dir='cache'):
+def pipeline(file_names: List[str], file_paths: Set[str], vocab_set: Set[str] = {}, max_len=0, char=False, BATCH_SIZE=64, TEST_SIZE=5000, BUFFER_SIZE=50000, cache_dir='cache'):
     """
     main pipeline function. implement the followings,
     1. load dataset from file
@@ -192,6 +199,7 @@ def pipeline(file_names: List[str], file_paths: Set[str], vocab_set: Set[str] = 
             batch_size [int]: batch size of dataset
             vocab_size [int]: vocabulry of tokens
             max_len [int]: maximux length of sequence. samples is padded to max_len
+            char [bool]: character-level tokenizer is applied or not
         vocab_set: set of string of vocabulary
     """
     params = {'buffer_size': BUFFER_SIZE, 'test_size': TEST_SIZE, 'batch_size': BATCH_SIZE}
@@ -200,7 +208,10 @@ def pipeline(file_names: List[str], file_paths: Set[str], vocab_set: Set[str] = 
     datasets = load_dataset(file_paths, file_names, BUFFER_SIZE)
 
     # custom tokenizer
-    datasets = datasets.map(tokenize_map_fn(ja_tokenizer()), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    if not char:
+        datasets = datasets.map(tokenize_map_fn(ja_tokenizer()), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    else:
+        datasets = datasets.map(tokenize_map_fn(char_tokenizer()), num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
     if not vocab_set:
         # create vocabulary

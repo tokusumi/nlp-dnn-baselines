@@ -2,7 +2,11 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Dropout
-from tfdata_preprocess import get_test_dataset
+
+from preprocess.tfdata import get_test_dataset
+from preprocess.utils import (
+    load_pickle,
+)
 
 
 def build_simple_dnn_model(maxlen, num_words, num_classes, activation="softmax", dense_dim=128, num=2, dropout=0.2):
@@ -21,20 +25,24 @@ if __name__ == "__main__":
     """
     simple DNN:
     ---
-    Test loss: 0.9957915084271491
-    Test accuracy: 0.3856
+    Test loss: 0.9283508432062366
+    Test accuracy: 0.5552
     """
-    train_data, test_data, params = get_test_dataset()
-    max_len = params.get('max_len')
-    num_words = params.get('vocab_size')
-    batch_size = params.get('batch_size')
     num_classes = 3
     epochs = 3
 
+    vocab_set = load_pickle('./preprocess/vocab_set.pkl')
+    # vocab_set = {}
+    train_data, test_data, params, vocab_set = get_test_dataset(epochs=epochs,
+                                                                vocab_set=vocab_set, max_len=30, cache_dir='cache/base')
+    max_len = params.get('max_len')
+    num_words = params.get('vocab_size')
+    batch_size = params.get('batch_size')
+
     model = build_simple_dnn_model(max_len, num_words, num_classes)
 
-    model.compile(loss=tf.keras.losses.binary_crossentropy,
-                  optimizer=tf.keras.optimizers.Adam(),
+    model.compile(loss='sparse_categorical_crossentropy',
+                  optimizer='adam',
                   metrics=['accuracy'])
     model.summary()
 
